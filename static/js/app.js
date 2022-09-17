@@ -6,9 +6,17 @@ function BuildCharts(selected){
 
          console.log(data);
 
-            var results = data.samples.filter(obj => selected)
+            var results = data.samples.filter(obj => obj.id == selected)
 
                 console.log(results)
+
+            var otu_ids = results[0].otu_ids;
+                var otu_labels = results[0].otu_labels;
+                    var sample_values = results[0].sample_values;
+
+                        console.log(otu_ids);
+
+
 
         })
 
