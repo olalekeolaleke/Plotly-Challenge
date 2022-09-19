@@ -92,7 +92,7 @@ function init() {
         color: otu_ids,
         }
     };
-    var data = [trace1];
+    var bubble_data = [trace1];
     var layout = {
         height: 500,
         width: 1000,
@@ -100,7 +100,7 @@ function init() {
         label: "OTU ID",
         margin: {t:30},
     };
-    Plotly.newPlot('bubble', data, layout); 
+    Plotly.newPlot('bubble', bubble_data, layout); 
 
     // Plotting Bar Chart
     var trace1 = {
@@ -115,12 +115,12 @@ function init() {
         colorscale: "#FF4F00"
         }
     };
-    var data = [trace1];
+    var bar_data = [trace1];
     var layout = {
         title: "Top 10 Belly Button Bacteria",
         margin: { t: 55, r: 25, l: 65, b: 25 },
     };
-    Plotly.newPlot("bar", data, layout);  
+    Plotly.newPlot("bar", bar_data, layout);  
     });
   }
   
