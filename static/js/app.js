@@ -1,90 +1,128 @@
-function buildMetadata(sample){
 
-    // console.log(selected)
-
-        d3.json('samples.json').then((data)=>{
-            var metadata = data.metadata;
-            console.log(data);
-
-            var resultsArray = metadata.filter(sampleObj => sampleObj.id == sample)
-            var result = resultsArray[0]
-            console.log(result)
-            let PANEL = d3.select("#sample-metadata");
-
-            PANEL.html("");
-
-            for (key in result){
-                PANEL.append("h6").text(`${key.toUpperCase()}: ${result[key]}`);
-                };
-
+function init() {
+    // Select the dropdown element
+    var selector = d3.select("#selDataset");
     
+    // Populate the dropdown with subject ID's from the list of sample Names
+      d3.json("./samples.json").then((data) => {
+        var subjectIds = data.names;
+        subjectIds.forEach((id) => {
+          selector
+          .append("option")
+          .text(id)
+          .property("value", id);
         });
-    }
-
-function buildCharts(sample){
-    d3.json('samples.json').then((data)=>{
-        var metadata = data.metadata;
-        console.log(data);
-
-        var resultsArray = metadata.filter(sampleObj => sampleObj.id == sample)
-        var results = resultsArray[0]
-        var otu_ids = results.otu_ids;
-        var otu_labels = results.otu_labels;
-        var sample_values = results.sample_values;
-
-         //barchart
-         let yticks = otu_ids.slice(0, 10).map(otuID => `OTU ${otuID}`).reverse();
-
-        let x_values=sample_values.slice(0,10);
-        let text_labels=otu_labels.slice(0,10);
-
-        let bar_chart=[{
-            y:yticks,
-            x:x_values.reverse(),
-            text:text_labels.reverse(),
-            type:"bar",
-            orientation:"h",
-            mode:"markers",
-            marker:{
-                
-                color:x_values,
-                colorscale:"#FF4F00"
-            }
-        }];
-
-        let layout={
-            margin: { t: 55, r: 25, l: 65, b: 25 },
-            title:"Top 10 Belly Button Bacteria"
-        };
-        // var config = {responsive: true}
-
-        Plotly.newPlot("bar",bar_chart,layout);
-
-    });
-}
-
-function init(){
-    let selector = d3.select("#selDataset");
-    d3.json('samples.json').then((data)=>{
-        let sampleNames = data.names;
-        for (let i = 0; i < sampleNames.length; i++){
-            selector
-              .append("option")
-              .text(sampleNames[i])
-              .property("value", sampleNames[i]);
-          };
       
-          // Use the first sample from the list to build the initial plots
-          let firstSample = sampleNames[0];
-          buildCharts(firstSample);
-          buildMetadata(firstSample);
+      // Use the first subject ID from the names to build initial plots
+      const newSample = subjectIds[0];
+      updateCharts(newSample);
+      updateMetadata(newSample);
     });
-}
+  }
+  
+  
+  
+  function updateMetadata(sample) {
+    d3.json("./samples.json").then((data) => {
+        var metadata = data.metadata;
+        var resultArray = metadata.filter(sampleObject => sampleObject.id == sample);
+        var result = resultArray[0];
+        var Panel = d3.select("#sample-metadata");
+            Panel.html("");
+        Object.entries(result).forEach(([key, value]) => {
+            Panel.append("h6").text(`${key.toUpperCase()}: ${value}`)
+        })
+    
+  // Data for Gauge Chart
+    var data = [
+      {
+        domain: {'x': [0, 1], 'y': [0, 1]},
+        marker: {size: 28, color:'royalblue'},
+        value: result.wfreq,
+        delta: {reference: 1, increasing: {color: "RebeccaPurple"}},
+        title: ("Belly Button Washing Frequency <br> Scrubs per Week"),
+        type: "indicator",
+        mode: "gauge+number+delta"
+      }
+    ];
 
-function optionChanged(firstSample){
+    // Layout for Gauge Chart
+  
+    var layout = {
+      width: 400,
+       height: 350,
+       margin: { t: 25, r: 25, l: 25, b: 25 },
+       line: {color: "red", width: '4'},
+       bgcolor: "white",
+       thickness: 0.75,
+       borderwidth: 2,
+     };
+  
+    
+    Plotly.newPlot("gauge", data, layout);
+    });
+  }
+  
+  
+  function updateCharts(sample) {    
+    d3.json("./samples.json").then((data) => {
+    var samples = data.samples;
+    var resultArray = samples.filter(sampleObject => sampleObject.id == sample);
+    var result = resultArray[0];
+    var sample_values = result.sample_values;
+    var otu_ids = result.otu_ids;
+    var otu_labels = result.otu_labels;   
+    
+    // Plotting Bubble Chart
+    var trace1 = {
+        x: otu_ids,
+        y: sample_values,
+        text: otu_labels,
+        mode: 'markers',
+        marker: {
+        size: sample_values,
+        color: otu_ids,
+        }
+    };
+    var data = [trace1];
+    var layout = {
+        title: 'Bacteria Cultures per Sample',
+        showlegend: false,
+        hovermode: 'closest',
+        x_axis: {title:"OTU ID " +sample},
+        margin: {t:30},
+    };
+    Plotly.newPlot('bubble', data, layout); 
 
-    buildCharts(firstSample);
-    buildMetadata(firstSample);
-};
+    // Plotting Bar Chart
+    var trace1 = {
+        x: sample_values.slice(0,10).reverse(),
+        y: otu_ids.slice(0,10).map(otuID => `OTU ${otuID}`).reverse(),
+        text: otu_labels.slice(0,10).reverse(),
+        mode:"markers",
+        type: "bar",
+        orientation: "h",
+        marker:{
+        color: otu_ids,
+        colorscale: "#FF4F00"
+        }
+    };
+    var data = [trace1];
+    var layout = {
+        title: "Top 10 Belly Button Bacteria",
+        margin: { t: 55, r: 25, l: 65, b: 25 },
+    };
+    Plotly.newPlot("bar", data, layout);  
+    });
+  }
+  
+  // Call function to update the chart
+  function optionChanged(newData) {
 
-init();
+    // Update the restyled plot's values
+    updateCharts(newData);
+    updateMetadata(newData);
+  }
+  
+  // Initialize the dashboard
+  init();
