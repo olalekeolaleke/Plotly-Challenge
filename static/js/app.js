@@ -40,7 +40,7 @@ function init() {
             PANEL.append("h6").text(`${key.toUpperCase()}: ${value}`)
         })
     
-  // Data for Gauge Chart
+  // Setting up Data and Plotting the Gauge Chart
     var data = [
       {
         domain: {'x': [0, 1], 'y': [0, 1]},
@@ -55,8 +55,6 @@ function init() {
         mode: "gauge+number+delta"
       }
     ];
-
-    // Layout for Gauge Chart
   
     var layout = {
       width: 400,
@@ -83,7 +81,7 @@ function init() {
     var otu_ids = result.otu_ids;
     var otu_labels = result.otu_labels;   
     
-    // Plotting Bubble Chart
+    // Plotting the Bubble Chart
     var trace1 = {
         x: otu_ids,
         y: sample_values,
@@ -96,15 +94,10 @@ function init() {
     };
     var data = [trace1];
     var layout = {
-        title: 'Bacteria Cultures per Sample',
-        font:{
-            family: 'Raleway, sans-serif'
-          },
-        showlegend: false,
-        height: 600,
+        height: 500,
         width: 1000,
         hovermode: 'closest',
-        x_axis: {title:"OTU ID " +sample},
+        label: "OTU ID",
         margin: {t:30},
     };
     Plotly.newPlot('bubble', data, layout); 
