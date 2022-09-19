@@ -1,11 +1,15 @@
+// Select the dropdown element
 
 function init() {
-    // Select the dropdown element
+    
     var selector = d3.select("#selDataset");
     
-    // Populate the dropdown with subject ID's from the list of sample Names
+    // Populating the dropdown with subject ID's from the list of sample Names
       d3.json("./samples.json").then((data) => {
         var subjectIds = data.names;
+
+        console.log(data);
+
         subjectIds.forEach((id) => {
           selector
           .append("option")
@@ -13,7 +17,7 @@ function init() {
           .property("value", id);
         });
       
-      // Use the first subject ID from the names to build initial plots
+      // Using the first subject ID from the names to build initial plots
       const newSample = subjectIds[0];
       updateCharts(newSample);
       updateMetadata(newSample);
@@ -25,6 +29,9 @@ function init() {
   function updateMetadata(sample) {
     d3.json("./samples.json").then((data) => {
         var metadata = data.metadata;
+
+        console.log(data);
+        
         var resultArray = metadata.filter(sampleObject => sampleObject.id == sample);
         var result = resultArray[0];
         var Panel = d3.select("#sample-metadata");
