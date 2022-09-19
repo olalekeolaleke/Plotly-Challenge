@@ -31,13 +31,13 @@ function init() {
         var metadata = data.metadata;
 
         console.log(data);
-        
+
         var resultArray = metadata.filter(sampleObject => sampleObject.id == sample);
         var result = resultArray[0];
-        var Panel = d3.select("#sample-metadata");
-            Panel.html("");
+        var PANEL = d3.select("#sample-metadata");
+            PANEL.html("");
         Object.entries(result).forEach(([key, value]) => {
-            Panel.append("h6").text(`${key.toUpperCase()}: ${value}`)
+            PANEL.append("h6").text(`${key.toUpperCase()}: ${value}`)
         })
     
   // Data for Gauge Chart
