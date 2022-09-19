@@ -41,6 +41,9 @@ function init() {
         value: result.wfreq,
         delta: {reference: 1, increasing: {color: "RebeccaPurple"}},
         title: ("Belly Button Washing Frequency <br> Scrubs per Week"),
+        font:{
+            family: 'Raleway, sans-serif'
+          },
         type: "indicator",
         mode: "gauge+number+delta"
       }
@@ -87,7 +90,12 @@ function init() {
     var data = [trace1];
     var layout = {
         title: 'Bacteria Cultures per Sample',
+        font:{
+            family: 'Raleway, sans-serif'
+          },
         showlegend: false,
+        height: 600,
+        width: 1000,
         hovermode: 'closest',
         x_axis: {title:"OTU ID " +sample},
         margin: {t:30},
@@ -124,5 +132,5 @@ function init() {
     updateMetadata(newData);
   }
   
-  // Initialize the dashboard
+  // Initializing the dashboard
   init();
